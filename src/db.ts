@@ -115,6 +115,20 @@ export async function hasVoted(
   return !!result
 }
 
+export async function getVotedPostIds(
+  db: D1Database,
+  postIds: number[],
+  visitorId: string
+): Promise<Set<number>> {
+  if (postIds.length === 0) return new Set()
+  const placeholders = postIds.map(() => '?').join(',')
+  const result = await db
+    .prepare(`SELECT post_id FROM votes WHERE visitor_id = ? AND post_id IN (${placeholders})`)
+    .bind(visitorId, ...postIds)
+    .all<{ post_id: number }>()
+  return new Set(result.results.map((r) => r.post_id))
+}
+
 export async function updatePostStatus(
   db: D1Database,
   id: number,
