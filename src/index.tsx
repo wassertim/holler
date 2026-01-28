@@ -1,10 +1,12 @@
 import { Hono } from 'hono'
 import { getCookie, setCookie } from 'hono/cookie'
+import { createMiddleware } from 'hono/factory'
 import { Layout } from './components/Layout'
 import { PostCard } from './components/PostCard'
 import { PostForm } from './components/PostForm'
 import { VoteButton } from './components/VoteButton'
-import { listPosts, createPost, toggleVote, getVotedPostIds } from './db'
+import { listPosts, createPost, toggleVote, getVotedPostIds, updatePostStatus, deletePost, hasVoted } from './db'
+import type { PostStatus } from './db'
 
 type Bindings = {
   DB: D1Database
@@ -43,12 +45,34 @@ function getVisitorId(c: any): string {
   return id
 }
 
+// Admin auth middleware
+const adminAuth = createMiddleware<{ Bindings: Bindings }>(async (c, next) => {
+  const token = c.env.ADMIN_TOKEN
+  if (!token) {
+    return c.text('Admin not configured', 503)
+  }
+
+  const authHeader = c.req.header('Authorization')
+  const queryToken = c.req.query('token')
+  const providedToken = authHeader?.replace('Bearer ', '') || queryToken
+
+  if (providedToken !== token) {
+    return c.text('Unauthorized', 401)
+  }
+
+  await next()
+})
+
 // Home page - list posts
 app.get('/', async (c) => {
   const status = c.req.query('status')
   const sort = c.req.query('sort') as 'votes' | 'newest' | 'oldest' | undefined
   const search = c.req.query('q')
   const visitorId = getVisitorId(c)
+
+  // Admin detection via query parameter
+  const adminToken = c.req.query('token')
+  const isAdmin = !!c.env.ADMIN_TOKEN && adminToken === c.env.ADMIN_TOKEN
 
   const posts = await listPosts(c.env.DB, { status, sort, search })
 
@@ -65,7 +89,7 @@ app.get('/', async (c) => {
         <p class="empty-state">No feedback yet. Be the first to share!</p>
       ) : (
         posts.map((post) => (
-          <PostCard post={post} voted={votedSet.has(post.id)} />
+          <PostCard post={post} voted={votedSet.has(post.id)} isAdmin={isAdmin} adminToken={adminToken} />
         ))
       )}
     </div>
@@ -188,6 +212,48 @@ app.post('/posts/:id/vote', async (c) => {
   }
 
   // No-JS fallback: redirect back
+  return c.redirect('/')
+})
+
+// Admin: update post status
+app.post('/posts/:id/status', adminAuth, async (c) => {
+  const postId = parseInt(c.req.param('id'), 10)
+  if (isNaN(postId)) return c.text('Invalid post ID', 400)
+
+  const body = await c.req.parseBody()
+  const status = body['status'] as PostStatus
+  const validStatuses = ['open', 'planned', 'in_progress', 'done', 'closed']
+  if (!validStatuses.includes(status)) {
+    return c.text('Invalid status', 400)
+  }
+
+  const post = await updatePostStatus(c.env.DB, postId, status)
+  if (!post) return c.text('Post not found', 404)
+
+  const visitorId = getVisitorId(c)
+  const voted = await hasVoted(c.env.DB, postId, visitorId)
+  const adminToken = c.req.query('token')
+
+  if (c.req.header('HX-Request')) {
+    return c.html(<PostCard post={post} voted={voted} isAdmin={true} adminToken={adminToken} />)
+  }
+
+  return c.redirect('/')
+})
+
+// Admin: delete post
+app.delete('/posts/:id', adminAuth, async (c) => {
+  const postId = parseInt(c.req.param('id'), 10)
+  if (isNaN(postId)) return c.text('Invalid post ID', 400)
+
+  const deleted = await deletePost(c.env.DB, postId)
+  if (!deleted) return c.text('Post not found', 404)
+
+  // HTMX: return empty to remove the element
+  if (c.req.header('HX-Request')) {
+    return c.html('')
+  }
+
   return c.redirect('/')
 })
 
