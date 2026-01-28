@@ -15,6 +15,20 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>()
 
+async function verifyTurnstile(secret: string, token: string, remoteIp?: string): Promise<boolean> {
+  const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      secret,
+      response: token,
+      remoteip: remoteIp,
+    }),
+  })
+  const result = await response.json<{ success: boolean }>()
+  return result.success
+}
+
 function getVisitorId(c: any): string {
   let id = getCookie(c, 'visitor_id')
   if (!id) {
@@ -122,6 +136,20 @@ app.get('/posts/new', (c) => {
 // Create post
 app.post('/posts', async (c) => {
   const body = await c.req.parseBody()
+
+  // Turnstile verification (skip if not configured, e.g. local dev)
+  if (c.env.TURNSTILE_SECRET) {
+    const turnstileToken = body['cf-turnstile-response'] as string
+    if (!turnstileToken) {
+      return c.html(<p class="error">Please complete the captcha verification</p>, 400)
+    }
+    const ip = c.req.header('CF-Connecting-IP') || ''
+    const valid = await verifyTurnstile(c.env.TURNSTILE_SECRET, turnstileToken, ip)
+    if (!valid) {
+      return c.html(<p class="error">Captcha verification failed. Please try again.</p>, 403)
+    }
+  }
+
   const title = (body['title'] as string || '').trim()
   const description = (body['description'] as string || '').trim()
   const email = (body['email'] as string || '').trim()
