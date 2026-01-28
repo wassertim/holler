@@ -1,0 +1,12 @@
+name = "holler"
+main = "src/index.tsx"
+compatibility_date = "2025-01-01"
+
+[assets]
+directory = "./public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "holler-db"
+database_id = "local"
+migrations_dir = "migrations"
