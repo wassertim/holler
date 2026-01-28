@@ -34,21 +34,23 @@ export const PostCard: FC<PostCardProps> = ({ post, voted, isAdmin, adminToken }
         </div>
         {isAdmin && (
           <div class="admin-controls">
-            <form
-              hx-post={`/posts/${post.id}/status?token=${adminToken}`}
+            <select
+              name="status"
+              hx-post={`/posts/${post.id}/status`}
+              hx-headers={JSON.stringify({ Authorization: `Bearer ${adminToken}` })}
+              hx-trigger="change"
               hx-target="closest .post-card"
               hx-swap="outerHTML"
             >
-              <select name="status" hx-trigger="change" hx-include="closest form">
-                {allStatuses.map((s) => (
-                  <option value={s} selected={post.status === s}>
-                    {statusLabels[s]}
-                  </option>
-                ))}
-              </select>
-            </form>
+              {allStatuses.map((s) => (
+                <option value={s} selected={post.status === s}>
+                  {statusLabels[s]}
+                </option>
+              ))}
+            </select>
             <button
-              hx-delete={`/posts/${post.id}?token=${adminToken}`}
+              hx-delete={`/posts/${post.id}`}
+              hx-headers={JSON.stringify({ Authorization: `Bearer ${adminToken}` })}
               hx-target="closest .post-card"
               hx-swap="outerHTML"
               hx-confirm="Delete this post?"

@@ -69,7 +69,10 @@ export async function createPost(
     .prepare('INSERT INTO posts (title, description, email) VALUES (?, ?, ?) RETURNING *')
     .bind(data.title, data.description || null, data.email || null)
     .first<Post>()
-  return result!
+  if (!result) {
+    throw new Error('Failed to create post: no row returned')
+  }
+  return result
 }
 
 export async function toggleVote(
@@ -77,30 +80,28 @@ export async function toggleVote(
   postId: number,
   visitorId: string
 ): Promise<{ voted: boolean; votes: number }> {
-  // Check if already voted
-  const existing = await db
-    .prepare('SELECT 1 FROM votes WHERE post_id = ? AND visitor_id = ?')
+  // Try to insert the vote; IGNORE if it already exists (unique constraint)
+  const insertResult = await db
+    .prepare('INSERT OR IGNORE INTO votes (post_id, visitor_id) VALUES (?, ?)')
     .bind(postId, visitorId)
-    .first()
+    .run()
 
-  if (existing) {
-    // Remove vote
+  if (insertResult.meta.changes > 0) {
+    // Insert succeeded — new vote
+    await db.prepare('UPDATE posts SET votes = votes + 1 WHERE id = ?')
+      .bind(postId).run()
+  } else {
+    // Insert was ignored — already voted, so remove it
     await db.prepare('DELETE FROM votes WHERE post_id = ? AND visitor_id = ?')
       .bind(postId, visitorId).run()
     await db.prepare('UPDATE posts SET votes = votes - 1 WHERE id = ?')
-      .bind(postId).run()
-  } else {
-    // Add vote
-    await db.prepare('INSERT INTO votes (post_id, visitor_id) VALUES (?, ?)')
-      .bind(postId, visitorId).run()
-    await db.prepare('UPDATE posts SET votes = votes + 1 WHERE id = ?')
       .bind(postId).run()
   }
 
   const post = await db.prepare('SELECT votes FROM posts WHERE id = ?')
     .bind(postId).first<{ votes: number }>()
 
-  return { voted: !existing, votes: post!.votes }
+  return { voted: insertResult.meta.changes > 0, votes: post!.votes }
 }
 
 export async function hasVoted(

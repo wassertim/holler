@@ -1,4 +1,4 @@
-import { Hono } from 'hono'
+import { Hono, Context } from 'hono'
 import { getCookie, setCookie } from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
 import { Layout } from './components/Layout'
@@ -31,7 +31,7 @@ async function verifyTurnstile(secret: string, token: string, remoteIp?: string)
   return result.success
 }
 
-function getVisitorId(c: any): string {
+function getVisitorId(c: Context<{ Bindings: Bindings }>): string {
   let id = getCookie(c, 'visitor_id')
   if (!id) {
     id = crypto.randomUUID()
@@ -113,6 +113,7 @@ app.get('/', async (c) => {
           hx-get="/"
           hx-trigger="keyup changed delay:300ms"
           hx-target="#post-list"
+          hx-include="[name='sort'],[name='status']"
           hx-push-url="true"
           value={search || ''}
         />
@@ -232,7 +233,7 @@ app.post('/posts/:id/status', adminAuth, async (c) => {
 
   const visitorId = getVisitorId(c)
   const voted = await hasVoted(c.env.DB, postId, visitorId)
-  const adminToken = c.req.query('token')
+  const adminToken = c.req.header('Authorization')?.replace('Bearer ', '') || c.req.query('token')
 
   if (c.req.header('HX-Request')) {
     return c.html(<PostCard post={post} voted={voted} isAdmin={true} adminToken={adminToken} />)
