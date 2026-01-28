@@ -100,8 +100,11 @@ export async function toggleVote(
 
   const post = await db.prepare('SELECT votes FROM posts WHERE id = ?')
     .bind(postId).first<{ votes: number }>()
+  if (!post) {
+    throw new Error('Post not found after vote toggle')
+  }
 
-  return { voted: insertResult.meta.changes > 0, votes: post!.votes }
+  return { voted: insertResult.meta.changes > 0, votes: post.votes }
 }
 
 export async function hasVoted(

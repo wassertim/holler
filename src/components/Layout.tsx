@@ -14,6 +14,8 @@ export const Layout: FC<LayoutProps> = ({ title, includeTurnstile, children }) =
         <title>{title ? `${title} - Holler` : 'Holler'}</title>
         <link rel="stylesheet" href="/styles.css" />
         <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+        <style dangerouslySetInnerHTML={{ __html: '.js-enabled .noscript-submit { display: none; }' }} />
+        <script dangerouslySetInnerHTML={{ __html: 'document.documentElement.classList.add("js-enabled");' }} />
         {includeTurnstile && (
           <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
         )}

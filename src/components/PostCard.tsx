@@ -33,7 +33,7 @@ export const PostCard: FC<PostCardProps> = ({ post, voted, isAdmin, adminToken }
           <time datetime={post.created_at}>{post.created_at}</time>
         </div>
         {isAdmin && (
-          <div class="admin-controls">
+          <form class="admin-controls" method="post" action={`/posts/${post.id}/status?token=${adminToken}`}>
             <select
               name="status"
               hx-post={`/posts/${post.id}/status`}
@@ -48,7 +48,9 @@ export const PostCard: FC<PostCardProps> = ({ post, voted, isAdmin, adminToken }
                 </option>
               ))}
             </select>
+            <button type="submit" class="noscript-submit">Update</button>
             <button
+              type="button"
               hx-delete={`/posts/${post.id}`}
               hx-headers={JSON.stringify({ Authorization: `Bearer ${adminToken}` })}
               hx-target="closest .post-card"
@@ -58,7 +60,7 @@ export const PostCard: FC<PostCardProps> = ({ post, voted, isAdmin, adminToken }
             >
               Delete
             </button>
-          </div>
+          </form>
         )}
       </div>
     </article>
