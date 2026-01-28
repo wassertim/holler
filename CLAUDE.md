@@ -97,6 +97,8 @@ npm run deploy     # Deploy to Cloudflare Workers
 | Command | Description |
 |---------|-------------|
 | `/implement [issue] [--auto]` | Implement feature with autonomous or classical mode |
+| `/review` | Review current PR and post review to GitHub |
+| `/fix-remarks [all \| specific]` | Fix PR review comments |
 
 ## AI Agents
 
@@ -104,6 +106,11 @@ npm run deploy     # Deploy to Cloudflare Workers
 |-------|-------|----------|
 | `implementation-planner` | opus | Feature planning with phases and dependency analysis |
 | `holler-coder` | opus | Implements single phases from plans (fresh context) |
+| `code-reviewer` | opus | Reviews PR changes and posts to GitHub via bot token |
+
+## GitHub Bot
+
+Reviews are posted via a bot account using `.claude/scripts/gh-bot`. Set `GH_BOT_TOKEN` environment variable with a GitHub PAT that has repo access.
 
 ## Self-Hosting
 
