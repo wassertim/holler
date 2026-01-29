@@ -1,13 +1,12 @@
-<table width="100%"><tr>
-<td><h1>Holler</h1></td>
-<td align="right"><a href="https://deploy.workers.cloudflare.com/?url=https://github.com/wassertim/holler"><img src="https://deploy.workers.cloudflare.com/button" /></a></td>
-</tr></table>
+# Holler
 
 Lightweight, open-source feedback board. One-click deploy. Free to run forever.
 
-![Holler screenshot](docs/screenshot.png)
+No servers. No containers. No databases to manage. Runs entirely on Cloudflare's free tier.
 
-[Live Demo](https://holler-demo.holler-25b.workers.dev) | No servers. No containers. No databases to manage. Runs entirely on Cloudflare's free tier.
+[Live Demo](https://holler-demo.holler-25b.workers.dev) | [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/wassertim/holler)
+
+![Holler screenshot](docs/screenshot.png)
 
 ## Features
 
@@ -24,7 +23,7 @@ Holler runs on [Cloudflare Workers](https://workers.cloudflare.com/) with a [D1]
 
 ## Deploy
 
-Click the button above. Cloudflare provisions everything automatically -- the Worker, the database, and the migrations.
+Click the deploy button. Cloudflare provisions everything automatically -- the Worker, the database, and the migrations.
 
 After deploying, optionally configure [Turnstile](https://developers.cloudflare.com/turnstile/) for spam prevention and an admin token for moderation. See the [setup guide](docs/setup.md) for details.
 
