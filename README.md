@@ -2,6 +2,8 @@
 
 Lightweight, open-source feedback board. HTMX + Cloudflare Workers + D1. Deploy in one click.
 
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/wassertim/holler)
+
 ## Features
 
 - **Feedback posts** with titles, descriptions, and optional email
