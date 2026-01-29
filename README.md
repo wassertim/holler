@@ -4,7 +4,7 @@ Lightweight, open-source feedback board. One-click deploy. Free to run forever.
 
 No servers. No containers. No databases to manage. Runs entirely on Cloudflare's free tier.
 
-[Live Demo](https://holler-demo.holler-25b.workers.dev) | [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/wassertim/holler)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-blue)](https://holler-demo.holler-25b.workers.dev) [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/wassertim/holler)
 
 ![Holler screenshot](docs/screenshot.png)
 
