@@ -1,8 +1,8 @@
 # Holler
 
-Lightweight, open-source feedback board. One-click deploy. Free to run forever.
+Collect feature requests and feedback for your product. Open-source, fully customizable, one-click deploy.
 
-No servers. No containers. No databases to manage. Runs entirely on Cloudflare's free tier.
+No servers. No containers. No databases to manage. Runs entirely on Cloudflare's free tier — free to run forever.
 
 [![Live Demo](docs/live-demo-button.svg)](https://holler-demo.holler-25b.workers.dev) [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/wassertim/holler)
 
