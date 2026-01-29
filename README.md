@@ -1,4 +1,7 @@
-<h1>Holler <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/wassertim/holler"><img src="https://deploy.workers.cloudflare.com/button" height="28" align="top" /></a></h1>
+<table width="100%"><tr>
+<td><h1>Holler</h1></td>
+<td align="right"><a href="https://deploy.workers.cloudflare.com/?url=https://github.com/wassertim/holler"><img src="https://deploy.workers.cloudflare.com/button" /></a></td>
+</tr></table>
 
 Lightweight, open-source feedback board. One-click deploy. Free to run forever.
 
