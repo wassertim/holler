@@ -1,6 +1,6 @@
 # Holler
 
-Collect feature requests and feedback for your product. Open-source, fully customizable, one-click deploy.
+Collect feature requests and feedback for your product. Open-source, easy to brand, one-click deploy.
 
 No servers. No containers. No databases to manage. Runs entirely on Cloudflare's free tier, free to run forever.
 
