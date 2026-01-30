@@ -105,6 +105,7 @@ header p {
 
 /* Theme Toggle -- Light Switch */
 .theme-toggle {
+  --toggle-size: 32px;
   flex-shrink: 0;
 }
 
@@ -126,9 +127,9 @@ header p {
   align-items: center;
   justify-content: space-between;
   position: relative;
-  width: 56px;
-  height: 28px;
-  padding: 0 6px;
+  width: calc(var(--toggle-size) * 2);
+  height: var(--toggle-size);
+  padding: 0 calc(var(--toggle-size) * 0.22);
   box-sizing: border-box;
   background: transparent;
   border: 1px solid var(--color-border);
@@ -144,8 +145,8 @@ header p {
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 24px;
-  height: 22px;
+  width: calc(var(--toggle-size) - 4px);
+  height: calc(var(--toggle-size) - 6px);
   background: var(--color-border);
   border-radius: 2px;
   transition: transform 0.2s ease;
@@ -153,7 +154,7 @@ header p {
 }
 
 .theme-toggle.is-dark .theme-switch-knob {
-  transform: translateX(26px);
+  transform: translateX(calc(var(--toggle-size) - 2px));
 }
 
 .theme-switch-sun,
@@ -161,6 +162,8 @@ header p {
   position: relative;
   z-index: 1;
   display: block;
+  width: calc(var(--toggle-size) / 2);
+  height: calc(var(--toggle-size) / 2);
   transition: color 0.2s ease, opacity 0.2s ease;
 }
 
