@@ -41,7 +41,7 @@ export const Layout: FC<LayoutProps> = ({ title, includeTurnstile, theme = 'ligh
         <footer>
           <p>Powered by <a href="https://github.com/wassertim/holler">Holler</a></p>
         </footer>
-        <script dangerouslySetInnerHTML={{ __html: `document.addEventListener("htmx:beforeRequest",function(e){var f=e.detail.elt;if(!f.classList||!f.classList.contains("theme-toggle"))return;var i=f.querySelector('input[name="theme"]');if(!i)return;var t=i.value;var d=document.documentElement;if(t==="dark"){d.classList.add("theme-dark");localStorage.setItem("holler-theme","dark");}else{d.classList.remove("theme-dark");localStorage.setItem("holler-theme","light");}});` }} />
+        <script dangerouslySetInnerHTML={{ __html: `document.addEventListener("htmx:beforeRequest",function(e){var f=e.detail.elt;if(!f.classList||!f.classList.contains("theme-toggle"))return;var i=f.querySelector('input[name="theme"]');if(!i)return;var t=i.value;var d=document.documentElement;if(t==="dark"){d.classList.add("theme-dark");f.classList.add("is-dark");localStorage.setItem("holler-theme","dark");}else{d.classList.remove("theme-dark");f.classList.remove("is-dark");localStorage.setItem("holler-theme","light");}});` }} />
       </body>
     </html>
   )

@@ -9,15 +9,12 @@ type ThemeToggleProps = {
 export const ThemeToggle: FC<ThemeToggleProps> = ({ currentTheme }) => {
   const isDark = currentTheme === 'dark'
   const nextTheme: Theme = isDark ? 'light' : 'dark'
-  // Sun icon when dark (click to go light), moon icon when light (click to go dark)
-  const icon = isDark ? '\u2600' : '\u263E'
-  const label = isDark ? 'Light' : 'Dark'
 
   return (
     <form
       method="POST"
       action={`/_theme?theme=${nextTheme}`}
-      class="theme-toggle"
+      class={`theme-toggle${isDark ? ' is-dark' : ''}`}
       hx-post={`/_theme?theme=${nextTheme}`}
       hx-target=".theme-toggle"
       hx-swap="outerHTML"
@@ -25,11 +22,14 @@ export const ThemeToggle: FC<ThemeToggleProps> = ({ currentTheme }) => {
       <input type="hidden" name="theme" value={nextTheme} />
       <button
         type="submit"
-        class="theme-toggle-btn"
-        aria-label={`Switch to ${label.toLowerCase()} mode`}
+        class="theme-switch"
+        aria-label={`Switch to ${nextTheme} mode`}
       >
-        <span class="theme-toggle-icon">{icon}</span>
-        {label}
+        <span class="theme-switch-icon" aria-hidden="true">{'\u2600'}</span>
+        <span class="theme-switch-track">
+          <span class="theme-switch-knob"></span>
+        </span>
+        <span class="theme-switch-icon" aria-hidden="true">{'\u263E'}</span>
       </button>
     </form>
   )
