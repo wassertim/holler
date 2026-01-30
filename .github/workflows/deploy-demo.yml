@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+    if: github.repository_owner == 'wassertim'
     runs-on: ubuntu-latest
     name: Deploy demo to Cloudflare Workers
     steps:
@@ -23,13 +23,16 @@ jobs:
         run: npm ci
 
       - name: Inject demo database ID
-        run: sed -i 's/DEMO_D1_DATABASE_ID/${{ secrets.DEMO_D1_DATABASE_ID }}/' wrangler.demo.toml
+        run: |
+          export DEMO_DB_ID="${{ secrets.DEMO_D1_DATABASE_ID }}"
+          sed -i "s|DEMO_D1_DATABASE_ID|${DEMO_DB_ID}|" wrangler.demo.toml
 
       - name: Apply D1 migrations
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.61.1'
           command: d1 migrations apply DB --remote --config wrangler.demo.toml
 
       - name: Deploy
@@ -37,4 +40,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.61.1'
           command: deploy --config wrangler.demo.toml
