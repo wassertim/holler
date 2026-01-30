@@ -243,7 +243,7 @@ header p {
   gap: 0;
   background: none;
   border: none;
-  padding: var(--space-2) var(--space-3);
+  padding: 0 var(--space-3);
   cursor: pointer;
   min-width: 48px;
   color: var(--color-text-muted);
