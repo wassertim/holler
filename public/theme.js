@@ -1,31 +1,29 @@
-// Theme toggle -- instant switch before HTMX round-trip
-document.addEventListener("htmx:beforeRequest", function (e) {
-  var form = e.detail.elt;
+// Theme toggle -- intercept form submit, toggle client-side, POST for cookie
+document.addEventListener("submit", function (e) {
+  var form = e.target;
   if (!form.classList || !form.classList.contains("theme-toggle")) return;
+  e.preventDefault();
 
-  var input = form.querySelector('input[name="theme"]');
-  if (!input) return;
-
-  var theme = input.value;
   var root = document.documentElement;
+  var isDark = root.classList.contains("theme-dark");
+  var newTheme = isDark ? "light" : "dark";
 
-  if (theme === "dark") {
-    root.classList.add("theme-dark");
-  } else {
-    root.classList.remove("theme-dark");
-  }
+  // Toggle root class
+  root.classList.toggle("theme-dark");
 
-  localStorage.setItem("holler-theme", theme);
+  // Persist to localStorage
+  localStorage.setItem("holler-theme", newTheme);
 
-  // Flip the hidden input so the next click sends the opposite theme
-  input.value = theme === "dark" ? "light" : "dark";
+  // Update form for no-JS fallback correctness
+  var nextTheme = newTheme === "dark" ? "light" : "dark";
+  var input = form.querySelector('input[name="theme"]');
+  if (input) input.value = nextTheme;
+  form.setAttribute("action", "/_theme?theme=" + nextTheme);
 
-  // Update the form action and hx-post for the next toggle
-  var next = input.value;
-  form.setAttribute("action", "/_theme?theme=" + next);
-  form.setAttribute("hx-post", "/_theme?theme=" + next);
-
-  // Update the aria-label
+  // Update aria-label
   var btn = form.querySelector(".theme-switch");
-  if (btn) btn.setAttribute("aria-label", "Switch to " + next + " mode");
+  if (btn) btn.setAttribute("aria-label", "Switch to " + nextTheme + " mode");
+
+  // Set cookie server-side (fire and forget)
+  fetch("/_theme?theme=" + newTheme, { method: "POST" });
 });
