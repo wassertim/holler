@@ -27,13 +27,13 @@ export const Layout: FC<LayoutProps> = ({ title, includeTurnstile, theme = 'ligh
       </head>
       <body>
         <header>
-          <div>
+          <div class="header-row">
             <a href="/">
               <h1>Holler</h1>
             </a>
-            <p>Share your feedback and feature requests</p>
+            <ThemeToggle currentTheme={theme} />
           </div>
-          <ThemeToggle currentTheme={theme} />
+          <p>Share your feedback and feature requests</p>
         </header>
         <main>
           {children}

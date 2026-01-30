@@ -74,11 +74,15 @@ body {
 
 /* Header */
 header {
+  margin-bottom: var(--space-12);
+}
+
+.header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-6);
-  margin-bottom: var(--space-12);
+  margin-bottom: var(--space-2);
 }
 
 header a {
@@ -91,7 +95,6 @@ header h1 {
   font-weight: 700;
   letter-spacing: -0.025em;
   line-height: 1.1;
-  margin-bottom: var(--space-1);
 }
 
 header p {
@@ -102,7 +105,6 @@ header p {
 
 /* Theme Toggle -- Light Switch */
 .theme-toggle {
-  margin-left: auto;
   flex-shrink: 0;
 }
 
