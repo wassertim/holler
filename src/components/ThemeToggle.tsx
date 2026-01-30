@@ -14,10 +14,9 @@ export const ThemeToggle: FC<ThemeToggleProps> = ({ currentTheme }) => {
     <form
       method="POST"
       action={`/_theme?theme=${nextTheme}`}
-      class={`theme-toggle${isDark ? ' is-dark' : ''}`}
+      class="theme-toggle"
       hx-post={`/_theme?theme=${nextTheme}`}
-      hx-target=".theme-toggle"
-      hx-swap="outerHTML"
+      hx-swap="none"
     >
       <input type="hidden" name="theme" value={nextTheme} />
       <button

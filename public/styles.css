@@ -152,12 +152,13 @@ header p {
   height: calc(var(--toggle-size) - 6px);
   background: var(--color-border);
   border-radius: 2px;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease;
   z-index: 0;
 }
 
-.theme-toggle.is-dark .theme-switch-knob {
+.theme-dark .theme-switch-knob {
   transform: translateX(calc(var(--toggle-size) - 2px));
+  background: var(--color-text-muted);
 }
 
 .theme-switch-sun,
@@ -174,7 +175,7 @@ header p {
   color: var(--color-text-muted);
 }
 
-.theme-toggle.is-dark .theme-switch-sun {
+.theme-dark .theme-switch-sun {
   opacity: 0.4;
 }
 
@@ -183,7 +184,8 @@ header p {
   opacity: 0.4;
 }
 
-.theme-toggle.is-dark .theme-switch-moon {
+.theme-dark .theme-switch-moon {
+  color: var(--color-text);
   opacity: 1;
 }
 

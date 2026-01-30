@@ -3,8 +3,6 @@ document.addEventListener("htmx:beforeRequest", function (e) {
   var form = e.detail.elt;
   if (!form.classList || !form.classList.contains("theme-toggle")) return;
 
-  window.__themeToggling = true;
-
   var input = form.querySelector('input[name="theme"]');
   if (!input) return;
 
@@ -13,20 +11,21 @@ document.addEventListener("htmx:beforeRequest", function (e) {
 
   if (theme === "dark") {
     root.classList.add("theme-dark");
-    form.classList.add("is-dark");
   } else {
     root.classList.remove("theme-dark");
-    form.classList.remove("is-dark");
   }
 
   localStorage.setItem("holler-theme", theme);
-});
 
-// Re-focus toggle button after HTMX swaps the element
-document.addEventListener("htmx:afterSettle", function () {
-  if (!window.__themeToggling) return;
-  window.__themeToggling = false;
+  // Flip the hidden input so the next click sends the opposite theme
+  input.value = theme === "dark" ? "light" : "dark";
 
-  var btn = document.querySelector(".theme-switch");
-  if (btn) btn.focus();
+  // Update the form action and hx-post for the next toggle
+  var next = input.value;
+  form.setAttribute("action", "/_theme?theme=" + next);
+  form.setAttribute("hx-post", "/_theme?theme=" + next);
+
+  // Update the aria-label
+  var btn = form.querySelector(".theme-switch");
+  if (btn) btn.setAttribute("aria-label", "Switch to " + next + " mode");
 });
