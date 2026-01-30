@@ -141,6 +141,13 @@ header p {
   border-color: var(--color-text-muted);
 }
 
+.theme-switch:active .theme-switch-track,
+.theme-switch:focus .theme-switch-track {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
+  transition: none;
+}
+
 .theme-switch-knob {
   position: absolute;
   top: 2px;
