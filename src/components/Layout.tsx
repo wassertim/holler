@@ -1,13 +1,15 @@
 import type { FC, PropsWithChildren } from 'hono/jsx'
+import { ThemeToggle } from './ThemeToggle'
 
 type LayoutProps = PropsWithChildren<{
   title?: string
   includeTurnstile?: boolean
+  theme?: 'light' | 'dark'
 }>
 
-export const Layout: FC<LayoutProps> = ({ title, includeTurnstile, children }) => {
+export const Layout: FC<LayoutProps> = ({ title, includeTurnstile, theme = 'light', children }) => {
   return (
-    <html lang="en">
+    <html lang="en" class={theme === 'dark' ? 'theme-dark' : ''}>
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -18,17 +20,20 @@ export const Layout: FC<LayoutProps> = ({ title, includeTurnstile, children }) =
         <link rel="stylesheet" href="/styles.css" />
         <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
         <style dangerouslySetInnerHTML={{ __html: '.js-enabled .noscript-submit { display: none; }' }} />
-        <script dangerouslySetInnerHTML={{ __html: 'document.documentElement.classList.add("js-enabled");' }} />
+        <script dangerouslySetInnerHTML={{ __html: '(function(){var d=document.documentElement;d.classList.add("js-enabled");var t=localStorage.getItem("holler-theme");if(!t){t=window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";localStorage.setItem("holler-theme",t);}if(t==="dark")d.classList.add("theme-dark");else d.classList.remove("theme-dark");})();' }} />
         {includeTurnstile && (
           <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
         )}
       </head>
       <body>
         <header>
-          <a href="/">
-            <h1>Holler</h1>
-          </a>
-          <p>Share your feedback and feature requests</p>
+          <div>
+            <a href="/">
+              <h1>Holler</h1>
+            </a>
+            <p>Share your feedback and feature requests</p>
+          </div>
+          <ThemeToggle currentTheme={theme} />
         </header>
         <main>
           {children}
@@ -36,6 +41,7 @@ export const Layout: FC<LayoutProps> = ({ title, includeTurnstile, children }) =
         <footer>
           <p>Powered by <a href="https://github.com/wassertim/holler">Holler</a></p>
         </footer>
+        <script dangerouslySetInnerHTML={{ __html: `document.addEventListener("htmx:beforeRequest",function(e){var f=e.detail.elt;if(!f.classList||!f.classList.contains("theme-toggle"))return;var i=f.querySelector('input[name="theme"]');if(!i)return;var t=i.value;var d=document.documentElement;if(t==="dark"){d.classList.add("theme-dark");localStorage.setItem("holler-theme","dark");}else{d.classList.remove("theme-dark");localStorage.setItem("holler-theme","light");}});` }} />
       </body>
     </html>
   )

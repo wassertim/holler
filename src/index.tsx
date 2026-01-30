@@ -5,6 +5,7 @@ import { Layout } from './components/Layout'
 import { PostCard } from './components/PostCard'
 import { PostForm } from './components/PostForm'
 import { VoteButton } from './components/VoteButton'
+import { ThemeToggle } from './components/ThemeToggle'
 import { listPosts, createPost, toggleVote, getVotedPostIds, updatePostStatus, deletePost, hasVoted } from './db'
 import type { PostStatus } from './db'
 
@@ -45,6 +46,14 @@ function getVisitorId(c: Context<{ Bindings: Bindings }>): string {
   return id
 }
 
+type Theme = 'light' | 'dark'
+
+function getTheme(c: Context<{ Bindings: Bindings }>): Theme {
+  const cookie = getCookie(c, 'holler-theme')
+  if (cookie === 'dark') return 'dark'
+  return 'light'
+}
+
 // Admin auth middleware
 const adminAuth = createMiddleware<{ Bindings: Bindings }>(async (c, next) => {
   const token = c.env.ADMIN_TOKEN
@@ -61,6 +70,28 @@ const adminAuth = createMiddleware<{ Bindings: Bindings }>(async (c, next) => {
   }
 
   await next()
+})
+
+// Theme toggle
+app.post('/_theme', (c) => {
+  const theme = c.req.query('theme')
+  const resolvedTheme: Theme = theme === 'dark' ? 'dark' : 'light'
+
+  setCookie(c, 'holler-theme', resolvedTheme, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Lax',
+    maxAge: 60 * 60 * 24 * 365,
+  })
+
+  // HTMX request: return updated toggle fragment
+  if (c.req.header('HX-Request')) {
+    return c.html(<ThemeToggle currentTheme={resolvedTheme} />)
+  }
+
+  // No-JS fallback: redirect back
+  const referer = c.req.header('Referer') || '/'
+  return c.redirect(referer)
 })
 
 // Home page - list posts
@@ -102,7 +133,7 @@ app.get('/', async (c) => {
 
   // Full page request
   return c.html(
-    <Layout includeTurnstile={!!c.env.TURNSTILE_SITE_KEY}>
+    <Layout includeTurnstile={!!c.env.TURNSTILE_SITE_KEY} theme={getTheme(c)}>
       <PostForm turnstileSiteKey={c.env.TURNSTILE_SITE_KEY} />
 
       <section class="controls">
@@ -152,7 +183,7 @@ app.get('/', async (c) => {
 // Show new post form page (for no-JS navigation)
 app.get('/posts/new', (c) => {
   return c.html(
-    <Layout title="New Feedback" includeTurnstile={!!c.env.TURNSTILE_SITE_KEY}>
+    <Layout title="New Feedback" includeTurnstile={!!c.env.TURNSTILE_SITE_KEY} theme={getTheme(c)}>
       <PostForm turnstileSiteKey={c.env.TURNSTILE_SITE_KEY} />
     </Layout>
   )
