@@ -12,6 +12,9 @@ export const Layout: FC<LayoutProps> = ({ title, includeTurnstile, children }) =
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{title ? `${title} - Holler` : 'Holler'}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" />
         <link rel="stylesheet" href="/styles.css" />
         <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
         <style dangerouslySetInnerHTML={{ __html: '.js-enabled .noscript-submit { display: none; }' }} />
